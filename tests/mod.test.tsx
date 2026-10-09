@@ -205,7 +205,7 @@ test('a failure nothing is read out of reaches Claude as it was', async ($, on) 
 
   await $.tool.call({ tool: 'Bash', command: 'npm run build', tool_use_id: 'toolu_3' })
 
-  expect(seen.statuses.at(-1)).toBe('✗ npm run build: 0 errors · 0 warnings')
+  expect(seen.statuses.at(-1)).toBe('✗ npm run build failed')
   const block = await modelReads($, seen, 'toolu_3', bash.text)
   expect(block?.content).toBe(bash.text)
 
@@ -272,6 +272,17 @@ test('/buildpane opens the pane and clear forgets the runs', async ($, on) => {
   expect(seen.opened).toEqual(['buildpane', 'buildpane'])
 
   await slash($, 'clear')
+  const ui = await $.ui.mount({ ...PANE, surface: 'terminal' })
+  expect(await ui.find({ type: 'Text', text: /No runs yet/ })).toBeDefined()
+  await ui.unmount()
+})
+
+test('a command line that fails before the build runs is not shown as a failed build', async ($, on) => {
+  const seen = world(on, failed('sed: 1: "src/lib.rs": extra characters at the end of l command'))
+
+  await $.tool.call({ tool: 'Bash', command: "sed -i 's/a/b/' src/lib.rs && cargo build", tool_use_id: 'toolu_10' })
+
+  expect(seen.statuses).toEqual([])
   const ui = await $.ui.mount({ ...PANE, surface: 'terminal' })
   expect(await ui.find({ type: 'Text', text: /No runs yet/ })).toBeDefined()
   await ui.unmount()

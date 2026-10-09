@@ -77,7 +77,7 @@ const announce = async ($: EngineInterface, finished: Run, autoOpen: AutoOpen) =
   await store($, finished)
 
   if (finished.status === 'failed') {
-    $.ui.status(`${GLYPH.failed} ${finished.label}: ${tally(finished)}`)
+    $.ui.status(finished.hasFindings ? `${GLYPH.failed} ${finished.label}: ${tally(finished)}` : `${GLYPH.failed} ${finished.label} failed`)
 
     if (autoOpen === 'failure') {
       openPane($)
@@ -244,6 +244,14 @@ export const register: Register = (on, options) => {
       logLines: report.lines,
       hasFindings,
     }
+    // A command line that failed without one line that speaks of a failure most likely failed
+    // before the build ran (a `cd` or a `sed` ahead of it): that is not a build to show.
+    if (hasFailed && !hasFindings && report.tail.length === 0 && !isStopped) {
+      await drop($, id)
+
+      return ran
+    }
+
     // A failure nothing was read out of is left as it is: Claude needs the raw output to see why.
     const isReadable = hasFindings && (finished.status === 'succeeded' || errorCount > 0 || failedTests > 0)
 
