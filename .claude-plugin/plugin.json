@@ -1,6 +1,6 @@
 {
   "name": "buildpane",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Turns build, test and lint output from tsc, cargo, go, pytest, jest, gradle and more into a live pane of errors by file, and hands Claude the diagnostics instead of the raw log.",
   "author": {
     "name": "Gary Riches",
@@ -8,6 +8,9 @@
   },
   "homepage": "https://github.com/griches/buildpane",
   "repository": "https://github.com/griches/buildpane",
+  "supportUrl": "https://github.com/griches/buildpane/issues",
+  "documentationUrl": "https://github.com/griches/buildpane#readme",
+  "privacyPolicyUrl": "https://github.com/griches/buildpane#what-it-does-on-your-machine",
   "license": "MIT",
   "keywords": ["build", "tests", "lint", "diagnostics", "typescript", "rust", "go", "python", "mod"],
   "types": "./types/index.d.ts",
