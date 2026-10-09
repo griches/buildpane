@@ -14,7 +14,7 @@ export type CondenseSettings = {
 export type Detail = 'all' | 'errors' | 'warnings' | 'tests' | 'raw'
 
 const LISTED = 50
-const CHARS_PER_TOKEN = 4
+const CHARS_EACH = 4
 
 export const plural = (count: number, word: string) => `${count} ${word}${count === 1 ? '' : 's'}`
 
@@ -31,8 +31,8 @@ export const seconds = (ms: number) => {
 }
 
 /** `about 12.4k tokens`: a count of characters as the tokens they roughly come to. */
-export const tokens = (chars: number) => {
-  const count = Math.round(chars / CHARS_PER_TOKEN)
+export const saving = (chars: number) => {
+  const count = Math.round(chars / CHARS_EACH)
 
   if (count < 1000) {
     return `${count}`

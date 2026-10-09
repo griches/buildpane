@@ -11,30 +11,30 @@ export type Report = {
 }
 
 const ANSI = /\x1b\[[0-9;?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[@-_]/g
-const PATH = String.raw`((?:[A-Za-z]:)?[^\s:()'"]+\.[A-Za-z0-9]+)`
+const PATH = `((?:[A-Za-z]:)?[^\\s:()'"]+\\.[A-Za-z0-9]+)`
 const LINE_WIDTH = 2000
 const TAIL_LINES = 6
 const TAIL_WIDTH = 240
 const FAILURE_WORDS = /\b(error|fatal|fail(ed|ure)?|exception|panicked|undefined (reference|symbols?)|\w+Error)\b/i
 
 // `src/a.ts(12,5): error TS2322: ...` (tsc, MSBuild, C#)
-const PARENS = new RegExp(String.raw`^\s*${PATH}\((\d+),(\d+)\): (error|warning) ([A-Za-z]+\d+): (.+)$`)
+const PARENS = new RegExp(`^\\s*${PATH}\\((\\d+),(\\d+)\\): (error|warning) ([A-Za-z]+\\d+): (.+)$`)
 // `src/a.ts:12:5 - error TS2322: ...` (tsc --pretty, pyright)
-const DASHED = new RegExp(String.raw`^\s*${PATH}:(\d+):(\d+) - (error|warning)(?: ([A-Za-z]+\d+))?: (.+)$`)
+const DASHED = new RegExp(`^\\s*${PATH}:(\\d+):(\\d+) - (error|warning)(?: ([A-Za-z]+\\d+))?: (.+)$`)
 // `src/a.c:12:5: error: ...` (gcc, clang, swiftc, javac, mypy)
-const COLONS = new RegExp(String.raw`^\s*${PATH}:(\d+)(?::(\d+))?: (?:fatal )?(error|warning): (.+)$`)
+const COLONS = new RegExp(`^\\s*${PATH}:(\\d+)(?::(\\d+))?: (?:fatal )?(error|warning): (.+)$`)
 // `e: file:///src/A.kt:12:5 ...` and the older `e: /src/A.kt: (12, 5): ...` (kotlinc)
-const KOTLIN = new RegExp(String.raw`^(e|w): (?:file://)?${PATH}:(\d+):(\d+):? (.+)$`)
-const KOTLIN_OLD = new RegExp(String.raw`^(e|w): (?:file://)?${PATH}: \((\d+), (\d+)\): (.+)$`)
+const KOTLIN = new RegExp(`^(e|w): (?:file://)?${PATH}:(\\d+):(\\d+):? (.+)$`)
+const KOTLIN_OLD = new RegExp(`^(e|w): (?:file://)?${PATH}: \\((\\d+), (\\d+)\\): (.+)$`)
 // `error[E0308]: mismatched types` then `  --> src/main.rs:4:18` (rustc)
 const RUST = /^(error|warning)(?:\[([A-Z]\d+)\])?: (.+)$/
-const RUST_AT = new RegExp(String.raw`^\s*--> ${PATH}:(\d+):(\d+)`)
+const RUST_AT = new RegExp(`^\\s*--> ${PATH}:(\\d+):(\\d+)`)
 const RUST_NOISE =
   /^(could not compile|aborting due to|test failed|build failed|process didn't exit|unused manifest key|.*\bgenerated \d+ warnings?\b|.*\bwarnings? emitted\b|failed to run custom build)/i
 // `./main.go:10:2: undefined: foo` (go build, go vet): no severity word.
 const GO = /^(?:vet: )?((?:\.{1,2}\/)?[^\s:]+\.go):(\d+):(\d+): (.+)$/
 // `src/a.py:12:5: E501 Line too long` (ruff, flake8)
-const RUFF = new RegExp(String.raw`^${PATH}:(\d+):(\d+): ([A-Z]+\d+) (.+)$`)
+const RUFF = new RegExp(`^${PATH}:(\\d+):(\\d+): ([A-Z]+\\d+) (.+)$`)
 // eslint's default report: a path on a line of its own, then `  12:5  error  message  rule`.
 const ESLINT_FILE = /^(?:[A-Za-z]:)?[^\s:]*[\\/][^\s:]*\.[A-Za-z0-9]+$/
 const ESLINT_ROW = /^\s+(\d+):(\d+)\s+(error|warning)\s+(.+?)(?:\s{2,}(\S+))?$/
@@ -63,7 +63,7 @@ const PASSED_MARKS = [
 const number = (text: string | undefined) => (text === undefined || text === '' ? null : Number(text))
 
 const count = (text: string, word: RegExp) => {
-  const found = new RegExp(String.raw`(\d+) ${word.source}`).exec(text)
+  const found = new RegExp(`(\\d+) ${word.source}`).exec(text)
 
   return found === null ? 0 : Number(found[1])
 }

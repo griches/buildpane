@@ -3,7 +3,7 @@ import type { EngineInterface, Register } from 'claude-code'
 
 import type { Issue, Run } from '../types'
 import { findInvocations } from './detect'
-import { basename, byFile, condense, details, location, plural, seconds, tally, tokens, verdict } from './format'
+import { basename, byFile, condense, details, location, plural, seconds, tally, saving, verdict } from './format'
 import type { Detail } from './format'
 import { parse } from './parse'
 
@@ -148,7 +148,7 @@ export const register: Register = (on, options) => {
     await $.ui.open({ id: PANE, title: TITLE })
     const latest = (await read($, runs)).at(-1)
     const saved = await read($, savedChars)
-    const told = saved === 0 ? '' : ` About ${tokens(saved)} tokens saved this session.`
+    const told = saved === 0 ? '' : ` About ${saving(saved)} tokens saved this session.`
 
     return {
       text:
@@ -342,7 +342,7 @@ export const register: Register = (on, options) => {
     const saved = await read($, savedChars)
     const lifetime = (await read($, savedBefore)) + saved
     const savings =
-      lifetime === 0 ? null : `Saved about ${tokens(saved)} tokens this session · ${tokens(lifetime)} in all`
+      lifetime === 0 ? null : `Saved about ${saving(saved)} tokens this session · ${saving(lifetime)} in all`
 
     if (latest === undefined) {
       return (

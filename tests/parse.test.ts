@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'claude-code/testing'
 
 import { findInvocations } from '../hooks/detect'
-import { condense, details, tokens } from '../hooks/format'
+import { condense, details, saving } from '../hooks/format'
 import { parse } from '../hooks/parse'
 import type { Run } from '../types'
 import {
@@ -270,8 +270,8 @@ describe('what Claude reads', () => {
   })
 
   test('tokens are counted from characters', () => {
-    expect(tokens(400)).toBe('100')
-    expect(tokens(49_600)).toBe('12.4k')
-    expect(tokens(8_000_000)).toBe('2.00M')
+    expect(saving(400)).toBe('100')
+    expect(saving(49_600)).toBe('12.4k')
+    expect(saving(8_000_000)).toBe('2.00M')
   })
 })
