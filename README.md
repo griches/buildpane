@@ -105,3 +105,7 @@ claude --plugin-dir .
 ```
 
 The fixtures in `tests/fixtures.ts` are real output from each tool where it was installed, and say so where they are not.
+
+## Licence
+
+MIT. See [LICENSE](LICENSE).

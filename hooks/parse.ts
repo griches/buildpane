@@ -12,6 +12,7 @@ export type Report = {
 
 const ANSI = /\x1b\[[0-9;?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[@-_]/g
 const PATH = String.raw`((?:[A-Za-z]:)?[^\s:()'"]+\.[A-Za-z0-9]+)`
+const LINE_WIDTH = 2000
 const TAIL_LINES = 6
 const TAIL_WIDTH = 240
 const FAILURE_WORDS = /\b(error|fatal|fail(ed|ure)?|exception|panicked|undefined (reference|symbols?)|\w+Error)\b/i
@@ -434,7 +435,12 @@ const testsOf = (lines: readonly string[], tool: string): Tests | null => {
 
 /** What a build's, test run's or lint run's output says, whichever toolchain wrote it. */
 export const parse = (raw: string, tool: string): Report => {
-  const lines = raw.replace(ANSI, '').replaceAll('\r\n', '\n').split('\n')
+  // A line longer than any diagnostic is cut before it is matched: minified output must not stall the hook.
+  const lines = raw
+    .replace(ANSI, '')
+    .replaceAll('\r\n', '\n')
+    .split('\n')
+    .map(line => (line.length > LINE_WIDTH ? line.slice(0, LINE_WIDTH) : line))
   const hasFailed = lines.some(line => FAILED_MARKS.some(mark => mark.test(line)))
   const hasPassed = lines.some(line => PASSED_MARKS.some(mark => mark.test(line)))
 

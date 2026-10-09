@@ -205,6 +205,11 @@ describe('what each toolchain said', () => {
     expect(parse(TSC_FAILED, 'script').issues).toHaveLength(3)
   })
 
+  test('a huge minified line is cut, not matched whole', () => {
+    const report = parse(`${'a.b('.repeat(500_000)}\n${TSC_FAILED}`, 'script')
+    expect(report.issues).toHaveLength(3)
+  })
+
   test('output nothing is read from says so', () => {
     const report = parse(UNREADABLE_FAILED, 'script')
     expect(report.issues).toEqual([])
