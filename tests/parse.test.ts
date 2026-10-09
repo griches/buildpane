@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'claude-code/testing'
 
-import { findInvocations } from '../hooks/detect'
+import { findInvocations, mixedWith } from '../hooks/detect'
 import { condense, details, saving } from '../hooks/format'
 import { parse } from '../hooks/parse'
 import type { Run } from '../types'
@@ -44,6 +44,14 @@ describe('which commands are read', () => {
     expect(labels('pnpm typecheck')).toEqual(['pnpm run typecheck'])
     expect(labels('yarn lint && yarn test')).toEqual(['yarn run lint', 'yarn test'])
     expect(findInvocations('npm run test:unit')[0]?.kind).toBe('test')
+  })
+
+  test('a line that prints something else as well is told apart', () => {
+    expect(mixedWith('cd app && cargo build 2>&1 | tail -40')).toEqual([])
+    expect(mixedWith('npm run build | tee build.log | grep -v node_modules')).toEqual([])
+    expect(mixedWith('cat Cargo.toml src/*.rs && cargo build 2>&1 | tail -40')).toEqual(['cat'])
+    expect(mixedWith('ls -la && npm test')).toEqual(['ls'])
+    expect(mixedWith('cargo build; echo "exit $?"')).toEqual(['echo'])
   })
 
   test('what is left alone', () => {
@@ -249,10 +257,8 @@ describe('what Claude reads', () => {
     const summary = condense(run(CARGO_BUILD_FAILED, 'cargo'), settings)
     expect(summary).toContain('cargo: BUILD FAILED in 2.3s (exit code 101)')
     expect(summary).toContain('src/lib.rs:7:5: error E0308: mismatched types')
-    expect(summary).toContain('1 warning not listed: lib.rs (1). Call mcp__buildpane__details to list them.')
+    expect(summary).toContain('src/lib.rs:2:9: warning: unused variable: `unused`')
     expect(summary).toContain('Other lines that mention a failure:\n  error: could not compile `demo`')
-    expect(summary).not.toContain('unused variable')
-    expect(condense(run(CARGO_BUILD_FAILED, 'cargo'), { ...settings, warnings: 'list' })).toContain('unused variable')
   })
 
   test('a passed test run is a few lines', () => {

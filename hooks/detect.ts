@@ -201,3 +201,19 @@ export const findInvocations = (command: string): Invocation[] =>
   commands(command)
     .map(one => resolve(one.name, one.args))
     .filter(one => one !== null)
+
+/** Commands that print nothing of their own, or only pass on what the build printed. */
+const PASSIVE = new Set([
+  'cd', 'pushd', 'popd', 'export', 'unset', 'set', 'source', '.', 'true', ':', 'mkdir', 'touch', 'rm', 'sleep', 'wait',
+  'tail', 'head', 'grep', 'egrep', 'rg', 'tee', 'sort', 'uniq', 'cut', 'awk', 'wc', 'tr', 'less', 'more', 'column',
+])
+
+/**
+ * The other commands of a line whose own output Claude may be after: `cat src/a.ts && tsc`
+ * prints a file as well as a build, so that line's output is not replaced by a summary.
+ */
+export const mixedWith = (command: string): string[] =>
+  commands(command)
+    .filter(one => resolve(one.name, one.args) === null)
+    .filter(one => !PASSIVE.has(one.name) && !((one.name === 'cat' || one.name === 'sed') && one.args.every(arg => arg.startsWith('-') || one.name === 'sed')))
+    .map(one => one.name)

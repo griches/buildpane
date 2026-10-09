@@ -287,3 +287,14 @@ test('a command line that fails before the build runs is not shown as a failed b
   expect(await ui.find({ type: 'Text', text: /No runs yet/ })).toBeDefined()
   await ui.unmount()
 })
+
+test('a line that also prints a file keeps its whole output, and the pane still shows the build', async ($, on) => {
+  const bash = failed(`[package]\nname = "demo"\n${NOISE}\n${CARGO_BUILD_FAILED}`, 101)
+  const seen = world(on, bash)
+
+  await $.tool.call({ tool: 'Bash', command: 'cat Cargo.toml && cargo build 2>&1', tool_use_id: 'toolu_11' })
+
+  expect(seen.statuses.at(-1)).toBe('✗ cargo build: 1 error · 1 warning')
+  const block = await modelReads($, seen, 'toolu_11', bash.text)
+  expect(block?.content).toBe(bash.text)
+})

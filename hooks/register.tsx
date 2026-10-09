@@ -2,7 +2,7 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
 import type { Issue, Run } from '../types'
-import { findInvocations } from './detect'
+import { findInvocations, mixedWith } from './detect'
 import { basename, byFile, condense, details, location, plural, seconds, tally, saving, verdict } from './format'
 import type { Detail } from './format'
 import { parse } from './parse'
@@ -261,7 +261,10 @@ export const register: Register = (on, options) => {
       raw.delete(old)
     }
 
-    if (wantsCondense && isReadable && !isStopped && ran.text !== undefined) {
+    // A line that also prints something else (a file, a listing) keeps its output: only the build's part could be summed up.
+    const isMixed = mixedWith(e.command).length > 0
+
+    if (wantsCondense && isReadable && !isStopped && !isMixed && ran.text !== undefined) {
       const exit = /^Exit code (\d+)/.exec(shown)
       const summary = condense(finished, {
         warnings,

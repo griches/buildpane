@@ -14,6 +14,7 @@ export type CondenseSettings = {
 export type Detail = 'all' | 'errors' | 'warnings' | 'tests' | 'raw'
 
 const LISTED = 50
+const FEW = 5
 const CHARS_EACH = 4
 
 export const plural = (count: number, word: string) => `${count} ${word}${count === 1 ? '' : 's'}`
@@ -110,7 +111,8 @@ export const condense = (run: Run, settings: CondenseSettings): string => {
     blocks.push(['Failed tests:', ...listed(failedTests(run, LISTED), run.tests.failed, 'failed test')])
   }
 
-  if (run.warningCount > 0 && settings.warnings === 'list') {
+  // A few warnings are cheaper to list than to make Claude ask for.
+  if (run.warningCount > 0 && (settings.warnings === 'list' || run.warningCount <= FEW)) {
     blocks.push(listed(warnings.slice(0, LISTED).map(diagnostic), run.warningCount, 'warning'))
   } else if (run.warningCount > 0) {
     const files = byFile(warnings)

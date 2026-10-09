@@ -76,6 +76,8 @@ buildpane only replaces output it understood:
 - A summary has to be at least 30% shorter than the output, or the output stays.
 - Lines that mention a failure without being one of the errors read (a linker error, a crash) are kept in the summary.
 - Commands run in the background are left alone.
+- A line that also prints something else, such as `cat src/a.ts && tsc`, keeps its whole output. The pane still shows the build.
+- Five warnings or fewer are listed in the summary; more are counted per file.
 
 ## Settings
 
