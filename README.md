@@ -92,9 +92,21 @@ All under buildpane in `/config`.
 
 Characters of output replaced, less the characters of the summary, divided by four. It is an estimate of tokens, not a bill.
 
-## Privacy
+## What it does on your machine
 
-buildpane makes no network requests and calls no model. It reads the output of commands Claude already ran, and keeps one number between sessions: the running total of characters saved.
+buildpane is a mod: code that runs inside Claude Code. This is everything it does.
+
+**It watches Bash commands.** It hooks the Bash tool, and when a command is a build, a test run or a lint run it lets the command run unchanged and then reads its output. It never changes a command and runs no command of its own. Other commands are passed on untouched.
+
+**It replaces what Claude reads of that output.** It hooks the row Claude Code stores for the tool's result and, for a run it understood, swaps the raw output for the summary shown above. Your transcript keeps the raw output, and the `details` tool hands any of it back.
+
+**It reads one kind of file**: when Claude Code has saved a long output to a file of its own, buildpane reads that file to see the whole output.
+
+**It makes no network requests and calls no model.**
+
+**It keeps one number between sessions**: the running total of characters saved, in Claude Code's own plugin storage.
+
+**It adds** the `/buildpane` command, a pane, a status line, a toast, a compact transcript row, and one tool for the model, `details`, which lists stored results and runs nothing.
 
 ## Development
 
