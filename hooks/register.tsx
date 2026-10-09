@@ -11,8 +11,6 @@ const PANE = 'buildpane'
 const TITLE = 'Build'
 const COMMAND = 'buildpane'
 const DETAILS_TOOL = 'mcp__buildpane__details'
-// A pattern, since the tool's name is not among the tools the type declarations list.
-const DETAILS_TOOL_NAMED = /^mcp__buildpane__details$/
 const SAVED_KEY = 'savedChars'
 const KEPT_RUNS = 20
 const KEPT_ISSUES = 300
@@ -45,6 +43,12 @@ const store = ($: EngineInterface, run: Run) =>
 
 const drop = ($: EngineInterface, id: string) => update($, runs, list => list.filter(one => one.id !== id))
 
+/** Moves the pane's clock on, so a running timer redraws. */
+const tick = async ($: EngineInterface) => {
+  const at = await $.clock.now()
+  await update($, now, () => at)
+}
+
 /** Shows `running` in the pane with a ticking timer for as long as `work` takes. */
 const track = async <T,>($: EngineInterface, running: Run, autoOpen: AutoOpen, work: () => Promise<T>): Promise<T> => {
   await update($, now, () => running.startedAt)
@@ -55,10 +59,7 @@ const track = async <T,>($: EngineInterface, running: Run, autoOpen: AutoOpen, w
   }
 
   const ticker = $.clock.every(1000, () => {
-    void $.clock
-      .now()
-      .then(at => update($, now, () => at))
-      .catch(() => undefined)
+    void tick($).catch(() => undefined)
   })
 
   try {
@@ -157,7 +158,7 @@ export const register: Register = (on, options) => {
     }
   })
 
-  on('tool.call', { tool: DETAILS_TOOL_NAMED }, async ($, e) => {
+  on('tool.call', { tool: /^mcp__buildpane__details$/ }, async ($, e) => {
     const latest = (await read($, runs)).findLast(one => one.status !== 'running')
     const asked = (e as { show?: unknown }).show
     const show: Detail = asked === 'errors' || asked === 'warnings' || asked === 'tests' || asked === 'raw' ? asked : 'all'
