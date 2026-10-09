@@ -1,0 +1,15 @@
+{
+  "name": "buildpane",
+  "description": "buildpane: build, test and lint diagnostics in a pane, for every toolchain.",
+  "owner": {
+    "name": "Gary Riches",
+    "url": "https://github.com/griches"
+  },
+  "plugins": [
+    {
+      "name": "buildpane",
+      "source": "./",
+      "description": "Turns build, test and lint output from tsc, cargo, go, pytest, jest, gradle and more into a live pane of errors by file, and hands Claude the diagnostics instead of the raw log."
+    }
+  ]
+}

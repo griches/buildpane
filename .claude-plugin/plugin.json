@@ -1,0 +1,41 @@
+{
+  "name": "buildpane",
+  "version": "0.1.0",
+  "description": "Turns build, test and lint output from tsc, cargo, go, pytest, jest, gradle and more into a live pane of errors by file, and hands Claude the diagnostics instead of the raw log.",
+  "author": {
+    "name": "Gary Riches",
+    "url": "https://github.com/griches"
+  },
+  "homepage": "https://github.com/griches/buildpane",
+  "repository": "https://github.com/griches/buildpane",
+  "keywords": ["build", "tests", "lint", "diagnostics", "tokens", "typescript", "rust", "go", "python", "mod"],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "condense": {
+      "type": "boolean",
+      "title": "Condense what Claude reads",
+      "description": "Replace the raw output in the tool result Claude reads with the parsed errors, warning counts and failed tests. The transcript keeps the raw output.",
+      "default": true
+    },
+    "warnings": {
+      "type": "string",
+      "title": "Warnings Claude reads",
+      "description": "count: Claude reads how many warnings each file has. list: Claude reads every warning.",
+      "options": ["count", "list"],
+      "default": "count"
+    },
+    "autoOpen": {
+      "type": "string",
+      "title": "Open the pane",
+      "description": "failure: when a run fails. always: when a run starts. never: only on /buildpane.",
+      "options": ["failure", "always", "never"],
+      "default": "failure"
+    },
+    "compactRow": {
+      "type": "boolean",
+      "title": "Compact transcript row",
+      "description": "Draw a condensed run in the transcript as a verdict and its first errors instead of the raw output.",
+      "default": true
+    }
+  }
+}
