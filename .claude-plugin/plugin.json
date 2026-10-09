@@ -1,6 +1,7 @@
 {
   "name": "buildpane",
-  "version": "0.1.8",
+  "displayName": "Build Pane",
+  "version": "0.1.9",
   "description": "Turns build, test and lint output from tsc, cargo, go, pytest, jest, gradle and more into a live pane of errors by file, and hands Claude the diagnostics instead of the raw log.",
   "author": {
     "name": "Gary Riches",
