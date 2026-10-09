@@ -1,5 +1,9 @@
 # buildpane
 
+[![GitHub stars](https://img.shields.io/github/stars/griches/buildpane?style=social)](https://github.com/griches/buildpane)
+[![CI](https://github.com/griches/buildpane/actions/workflows/ci.yml/badge.svg)](https://github.com/griches/buildpane/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/griches/buildpane.svg)](LICENSE)
+
 **Build, test and lint results in a pane, and far fewer tokens spent reading logs.**
 
 buildpane is a Claude Code mod. When Claude runs a build, a test suite or a linter, buildpane reads the output, shows the errors grouped by file in a live pane, and hands Claude the diagnostics instead of the raw log. A 400-line `cargo build` becomes a dozen lines Claude can act on, and the pane keeps a running count of the tokens that saved.
