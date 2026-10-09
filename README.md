@@ -4,6 +4,8 @@
 
 buildpane is a Claude Code mod. When Claude runs a build, a test suite or a linter, buildpane reads the output, shows the errors grouped by file in a live pane, and hands Claude the diagnostics instead of the raw log. A 400-line `cargo build` becomes a dozen lines Claude can act on, and the pane keeps a running count of the tokens that saved.
 
+![A failing cargo build shown in the pane, then fixed](docs/buildpane.gif)
+
 It works by itself: there is nothing to run and no command to learn.
 
 ## Install
@@ -49,6 +51,8 @@ Runners and wrappers are followed: `npx tsc`, `pnpm exec vitest`, `uv run pytest
 - **A compact row** in the transcript where the raw log would be: the verdict and the first errors.
 - **A status line** while a run is failing, and a toast when one passes.
 - **A savings line** in the pane: tokens saved this session and in all.
+
+![The pane beside a session: two errors in forecast.rs, the status line and the savings count](docs/pane-failed.png)
 
 `/buildpane` opens the pane. `/buildpane clear` forgets the runs.
 
